@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,8 +10,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  SharedPreferences sharedPreferences;
+
   TextEditingController user=new TextEditingController();
   TextEditingController pass=new TextEditingController();
+
 
   Future<List> _login() async{
     String username = user.text;
@@ -22,7 +26,22 @@ class _LoginPageState extends State<LoginPage> {
     final response = await http.post("http://www.simpixie.com/api/android/kalimasada/pembeli/login",
         headers: {'authorization': basicAuth});
 
-    print(response.body);
+    var datauser = json.decode(response.body);
+
+    if(datauser.length==0){
+      setState(() {
+        print("Login Gagal");
+      });
+    }else{
+      if(datauser['success']==200){
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("token", datauser['login']['token']);
+        prefs.commit();
+        Navigator.of(context).pushReplacementNamed('/homepage');
+      }else{
+        print("Login Gagal");
+      }
+    }
   }
 
 
