@@ -23,7 +23,7 @@ class _SignUpState extends State<SignUp> {
     String _no_hp = no_hp.text;
 
 
-    var url = "https://www.simpixie.com/api/android/kalimasada/pembeli/daftar";
+    var url = "http://192.168.43.19/api/android/kalimasada/pembeli/daftar.php";
     final response = await http.post(
         url,
         body: {
